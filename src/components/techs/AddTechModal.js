@@ -1,36 +1,82 @@
-import React, { useState, useEffect } from 'react';
-import TechItem from './TechItem';
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 
-const TechListModal = () => {
-  const [techs, setTechs] = useState([]);
-  const [loading, setLoading] = useState(false);
+import { connect } from 'react-redux';
+import { addTech } from '../../actions/techActions';
 
-  useEffect(() => {
-    getTechs();
-    // eslint-disable-next-line
-  }, []);
+import M from 'materialize-css/dist/js/materialize.min.js';
 
-  const getTechs = async () => {
-    setLoading(true);
-    const techs = await fetch('/techs');
-    const data = await techs.json();
+const AddTechModal = ({ addTech }) => {
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
 
-    setTechs(data);
-    setLoading(false);
+  const onSubmit = () => {
+    if (firstName === '' || lastName === '') {
+      M.toast({ html: 'Please enter the first and last name' });
+    } else {
+      addTech({
+        firstName,
+        lastName
+      });
+
+      M.toast({ html: `${firstName} ${lastName} was added as a tech` });
+
+      // Clear Fields
+      setFirstName('');
+      setLastName('');
+    }
   };
 
   return (
-    <div id='tech-list-modal' className='modal'>
+    <div id='add-tech-modal' className='modal'>
       <div className='modal-content'>
-        <h4>Technician List</h4>
-        <ul className='collection'>
-          {!loading &&
-            techs !== null &&
-            techs.map(tech => <TechItem tech={tech} key={tech.id} />)}
-        </ul>
+        <h4>New Technician</h4>
+        <div className='row'>
+          <div className='input-field'>
+            <input
+              type='text'
+              name='firstName'
+              value={firstName}
+              onChange={e => setFirstName(e.target.value)}
+            />
+            <label htmlFor='firstName' className='active'>
+              First Name
+            </label>
+          </div>
+        </div>
+
+        <div className='row'>
+          <div className='input-field'>
+            <input
+              type='text'
+              name='lastName'
+              value={lastName}
+              onChange={e => setLastName(e.target.value)}
+            />
+            <label htmlFor='lastName' className='active'>
+              Last Name
+            </label>
+          </div>
+        </div>
+      </div>
+      <div className='modal-footer'>
+        <a
+          href='#!'
+          onClick={onSubmit}
+          className='modal-close waves-effect blue waves-light btn'
+        >
+          Enter
+        </a>
       </div>
     </div>
   );
 };
 
-export default TechListModal;
+AddTechModal.propTypes = {
+  addTech: PropTypes.func.isRequired
+};
+
+export default connect(
+  null,
+  { addTech }
+)(AddTechModal);
