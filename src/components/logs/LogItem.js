@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Moment from 'react-moment';
+import moment from 'moment';
 
 import { connect } from 'react-redux';
 import { deleteLog, setCurrent } from '../../actions/logActions';
@@ -29,7 +29,7 @@ const LogItem = ({ log, deleteLog, setCurrent }) => {
         <span className='grey-text'>
           <span className='black-text'>ID #{log.id}</span>{' '}
           <span className='black-text'>{log.tech}</span> on{' '}
-          <Moment format='MMMM Do YYYY, h:mm:ss a'>{log.date}</Moment>
+          {moment(log.date).format('MM/DD/YYYY hh:mm:ss')}
         </span>
         <a href='#!' onClick={onDelete} className='secondary-content'>
           <i className='material-icons grey-text'>delete</i>
